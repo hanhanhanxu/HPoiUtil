@@ -1,6 +1,6 @@
 ### 一、下载
 
-将HPoiUtil.java下载（推荐chorme插件 : https://chrome.google.com/webstore/detail/anlikcnbgdeidpacdbdljnabclhahhmd 可使你从Github上面下载单个文件）
+将HPoiUtil.java下载（推荐chorme插件 : https://chrome.google.com/webstore/detail/anlikcnbgdeidpacdbdljnabclhahhmd 可使你从Github上面下载单个文件。链接需翻墙，推荐：蓝灯，Baacloud）
 
 
 
@@ -129,7 +129,7 @@ public class Test {
 
 ### 六、注意事项
 
-本版本，只会读取Excel表格的第一个sheet。从Excel表格中读取的数据全为String类型，从listS到listO做**数据对象化**时，根据你类的属性，将相关数据设置为相关类型。可用类型有String，Integer，Long。
+本版本支持xls和xlsx两种Excel文件格式。只会读取Excel表格的第一个sheet。从Excel表格中读取的数据全为String类型，从listS到listO做**数据对象化**时，根据你类的属性，将相关数据设置为相关类型。可用类型有String，Integer，Long。
 
 （po类的属性类型必须为对象类型，不可用int等基本类型）
 
