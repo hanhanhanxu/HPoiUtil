@@ -1,6 +1,6 @@
 ### 一、下载
 
-将HPoiUtil.java下载（推荐chorme插件 : https://chrome.google.com/webstore/detail/anlikcnbgdeidpacdbdljnabclhahhmd可使你从Github上面下载单个文件）
+将HPoiUtil.java下载（推荐chorme插件 : https://chrome.google.com/webstore/detail/anlikcnbgdeidpacdbdljnabclhahhmd 可使你从Github上面下载单个文件）
 
 
 
