@@ -18,16 +18,14 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
+ /****************test_fork_request********************************
  * 导入 将excel文件中的数据导入到数据库中
  *
  * 但是我们这个只做读取，
  * 读取Excel文件数据到List集合中，
  * 然后将这些散装数据集合封装成对象化集合List<String> -> List<Class>
- *
- *
- *     要求类属性的类型全部写成包装类型，比如int->Integer float->Float
- */
+ * 要求类属性的类型全部写成包装类型，比如int->Integer float->Float
+ ******************************************************************/
 
 public class HPoiUtil {
 
