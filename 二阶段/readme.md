@@ -11,7 +11,7 @@
 
 数据格式见截图：（学号已做处理，非真实学号）
 
-![lQbb0f.png](https://s2.ax1x.com/2019/12/30/lQbb0f.png)
+![1.png](https://s2.ax1x.com/2019/12/30/lQbb0f.png)
 
 ### 三、准备你的po
 
@@ -79,7 +79,7 @@ public class Test {
 
 ### 五、测试结果
 
-![lQLsZ6.png](https://s2.ax1x.com/2019/12/30/lQLsZ6.png)
+![2.png](https://s2.ax1x.com/2019/12/30/lQLsZ6.png)
 
 拿到数据的对象集合后方便进行数据库持久化操作。
 
