@@ -28,9 +28,9 @@
 
 当Excel存在整行没有数据时，则不会读取。
 
-例如右侧蓝色框内整行无内容，则不会被读取，实际读取内容为红色框内。![在这里插入图片描述](https://img-blog.csdnimg.cn/20200617143109690.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2hhbmhhbmhhbnh1,size_16,color_FFFFFF,t_70)
+例如右侧蓝色框内整行无内容，则不会被读取，实际读取内容为红色框内。![NZ9kPU.jpg](https://s1.ax1x.com/2020/06/17/NZ9kPU.jpg)
 
-所以实际读取的内容是这样：![在这里插入图片描述](https://img-blog.csdnimg.cn/20200617152235232.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2hhbmhhbmhhbnh1,size_16,color_FFFFFF,t_70)
+所以实际读取的内容是这样：![NZ9VxJ.jpg](https://s1.ax1x.com/2020/06/17/NZ9VxJ.jpg)
 
 
 
@@ -38,9 +38,9 @@
 
 1、将HPoiUtils下载
 
-2、准备一个Excel文件E:\1my|软件设计欠费名单.xlsx，Sheet1内容如图：![在这里插入图片描述](https://img-blog.csdnimg.cn/20200617153526447.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2hhbmhhbmhhbnh1,size_16,color_FFFFFF,t_70)
+2、准备一个Excel文件E:\1my|软件设计欠费名单.xlsx，Sheet1内容如图：![NZ9Ma6.jpg](https://s1.ax1x.com/2020/06/17/NZ9Ma6.jpg)
 
-Sheet2内容如图：![在这里插入图片描述](https://img-blog.csdnimg.cn/20200617153826965.jpg)
+Sheet2内容如图：![NZ91PO.jpg](https://s1.ax1x.com/2020/06/17/NZ91PO.jpg)
 
 3、编写测试案例：
 
@@ -171,7 +171,7 @@ public class Student {
 
 测试结果：
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/2020061715412837.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2hhbmhhbmhhbnh1,size_16,color_FFFFFF,t_70)
+![NZ9GxH.jpg](https://s1.ax1x.com/2020/06/17/NZ9GxH.jpg)
 
 
 
@@ -183,8 +183,58 @@ public class Student {
 
 测试结果：
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200617154429215.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2hhbmhhbmhhbnh1,size_16,color_FFFFFF,t_70)
+![NZ9YMd.jpg](https://s1.ax1x.com/2020/06/17/NZ9YMd.jpg)
 
 
 
 得到对象集合后，即可方便的入库或处理。
+
+
+
+### 依赖
+
+```xml
+<dependencies>
+    <!--poi-->
+    <dependency>
+        <groupId>org.apache.poi</groupId>
+        <artifactId>poi-ooxml</artifactId>
+        <version>3.17</version>
+    </dependency>
+    <!--javassist.*-->
+    <dependency>
+        <groupId>org.javassist</groupId>
+        <artifactId>javassist</artifactId>
+        <version>3.18.2-GA</version>
+    </dependency>
+    <!--以下是用到的一些工具类-->
+    <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-lang3</artifactId>
+        <version>3.5</version>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-core</artifactId>
+        <version>5.2.2.RELEASE</version>
+    </dependency>
+    <dependency>
+        <groupId>org.projectlombok</groupId>
+        <artifactId>lombok</artifactId>
+        <version>1.12.6</version>
+    </dependency>
+    <!--不传入类时，类拷贝-->
+    <dependency>
+        <groupId>commons-beanutils</groupId>
+        <artifactId>commons-beanutils</artifactId>
+        <version>1.9.3</version>
+    </dependency>
+    <!--输出json样式-->
+    <dependency>
+        <groupId>com.google.code.gson</groupId>
+        <artifactId>gson</artifactId>
+        <version>2.8.5</version>
+    </dependency>
+</dependencies>
+```
+
