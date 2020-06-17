@@ -207,17 +207,13 @@ public class Student {
         <artifactId>javassist</artifactId>
         <version>3.18.2-GA</version>
     </dependency>
-    <!--以下是用到的一些工具类-->
+    <!--工具类-->
     <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-lang3</artifactId>
         <version>3.5</version>
     </dependency>
-    <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-core</artifactId>
-        <version>5.2.2.RELEASE</version>
-    </dependency>
+    <!--pojo类的setter getter等方法-->
     <dependency>
         <groupId>org.projectlombok</groupId>
         <artifactId>lombok</artifactId>
