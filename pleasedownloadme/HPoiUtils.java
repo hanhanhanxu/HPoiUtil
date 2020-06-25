@@ -2,14 +2,8 @@ package riun.xyz.nice.Demo1.shorthx;
 
 import javassist.*;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.hssf.usermodel.*;
+
 
 import java.io.*;
 import java.lang.reflect.Constructor;
@@ -35,31 +29,12 @@ public class HPoiUtils {
      * @param listField 表头属性集合
      * @return 读取到的对象集合
      */
-    //file listField
-    public static List exe(File file, List<String> listField) {
-        return exe(file, 0, listField, true);
-    }
 
-    //file listField hasHeader
-    public static List exe(File file, List<String> listField, boolean hasHeader) {
-        return exe(file, 0, listField, hasHeader);
-    }
-
-    //file sheet listField
-    public static List exe(File file, Integer sheetIndex, List<String> listField) {
-        return exe(file, sheetIndex, listField, true);
-    }
 
     public static List exe(File file, String sheetName, List<String> listField) {
         return exe(file, sheetName, listField, true);
     }
 
-    //file sheet listField hasHeader
-    public static List exe(File file, Integer sheetIndex, List<String> listField, boolean hasHeader) {
-        //生成类
-        Class c = generateClass(listField);
-        return exe(file, sheetIndex, listField, c, hasHeader);
-    }
 
     public static List exe(File file, String sheetName, List<String> listField, boolean hasHeader) {
         //生成类
@@ -67,46 +42,13 @@ public class HPoiUtils {
         return exe(file, sheetName, listField, c, hasHeader);
     }
 
-    //file listField class
-    public static List exe(File file, List<String> listField, Class c){
-        return exe(file, 0, listField, c, true);
-    }
 
-    //file listField class hasHeader
-    public static List exe(File file, List<String> listField, Class c, boolean hasHeader){
-        return exe(file, 0, listField, c, hasHeader);
-    }
-
-    //file sheet listField class
-    public static List exe(File file, Integer sheetIndex, List<String> listField, Class c){
-        return exe(file, sheetIndex, listField, c, true);
-    }
 
     public static List exe(File file, String sheetName, List<String> listField, Class c){
-        return exe(file, sheetName, listField, c, true);//sheetName不区分大小写
+        return exe(file, sheetName, listField, c, true);
     }
 
-    /**
-     * 供外部调用的全部参数的方法
-     * @param file 文件
-     * @param sheetIndex 读取的sheet索引值 从0开始
-     * @param listField Excel表中每列对应的属性集合
-     * @param c 类
-     * @param hasHeader Excel是否有头部
-     * @return 读取到的对象集合
-     */
-    //file sheet listField class hasHeader
-    public static List exe(File file, Integer sheetIndex, List<String> listField, Class c, boolean hasHeader){
-        //参数检查
-        Boolean check = check(file, sheetIndex, listField, c);
-        if(!check){
-            return null;
-        }
 
-        //得到结果
-        List listResultObj = generateResult(file, sheetIndex, listField, c, hasHeader);
-        return listResultObj;
-    }
 
     /**
      * 供外部调用的全部参数的方法
@@ -132,16 +74,13 @@ public class HPoiUtils {
 
     /*******************************************************下面是私有方法*******************************************************************/
 
-    private static List generateResult(File file, Integer sheetIndex, List<String> listField, Class c, boolean hasHeader) {
-        Integer len = listField.size();
-        List listResultStr = getStr(file, sheetIndex, len); //得到字符串数据集合
-        return getObj(listField, listResultStr, c, hasHeader); //得到对象数据集合
-    }
 
     private static List generateResult(File file, String sheetName, List<String> listField, Class c, boolean hasHeader) {
         Integer len = listField.size();
-        List listResultStr = getStr(file, sheetName, len); //得到字符串数据集合
-        return getObj(listField, listResultStr, c, hasHeader); //得到对象数据集合
+        //得到字符串数据集合
+        List listResultStr = getStr(file, sheetName, len);
+        //得到对象数据集合
+        return getObj(listField, listResultStr, c, hasHeader);
     }
 
 
@@ -156,7 +95,7 @@ public class HPoiUtils {
         // 得到一个池
         ClassPool pool = ClassPool.getDefault();
         // 根据名称在运行期间动态生成一个类
-        String className = HPoiUtils.class.getPackage().getName() + "." + CLASSNAME + ".java";
+        String className = MPoiUtil.class.getPackage().getName() + "." + CLASSNAME + ".java";
         // 根据类名 动态生成一个CtClass
         CtClass ctClass = pool.makeClass(className);
 
@@ -171,19 +110,16 @@ public class HPoiUtils {
             try {
                 addFieldProperty(ctClass, filed.getName(), pool.getCtClass(filed.getClair()));
             } catch (CannotCompileException e) {
-                System.out.println("添加字段失败");
-                return null;
+                throw new RuntimeException("添加字段失败");
             } catch (NotFoundException e) {
-                System.out.println("添加字段失败");
-                return null;
+                throw new RuntimeException("添加字段失败");
             }
         }
 
         try {
             return ctClass.toClass();
         } catch (CannotCompileException e) {
-            System.out.println("无法转化类");
-            return null;
+            throw new RuntimeException("无法转化类");
         }
     }
 
@@ -211,7 +147,9 @@ public class HPoiUtils {
         ctClass.addMethod(CtNewMethod.setter(setName, ctField));
     }
 
-    // 字段属性类
+    /**
+     * 字段属性类
+     */
     static class FieldDeclare{
         private String clair; // 字段类型  可以通过字段类型名字得到字段类型的类  String -> Class
         private String name; // 字段名
@@ -257,87 +195,57 @@ public class HPoiUtils {
         try {
             //sheetIndex检查
             if (sheetIndex < 0) {
-                System.out.println("sheet索引值不能为负数");
-                return false;
-            }
-            //1、listField集合校验
-            if (listField == null || listField.size() == 0) {
-                System.out.println("listField集合为空, 表头元素对应属性名字的集合是必须的");
-                return false;
-            }
-            for (String ex : listField) {
-                if(StringUtils.isEmpty(ex)){
-                    System.out.println("listField中不允许出现空字符串");
-                    return false;
-                }
+                throw new RuntimeException("sheet索引值不能为负数");
             }
 
-            //2、文件校验
-            String path = file.getPath();
-
-            try (  InputStream inTemp = new FileInputStream(path) ){
-                if (inTemp == null) {//有必要吗
-                    System.out.println("无法得到文件流");
-                    return false;
-                }
-            } catch (FileNotFoundException e) {
-                System.out.println("文件路径错误或在这个路径下找不到此文件");
-                return false;
-            }
-
-            if (c == null) {
-                System.out.println("c为空，Class是必须的");
-                return false;
-            }
-            return true;
+            return validateFieldAndFile(listField,file, c);
         }catch (Exception e){
-            System.out.println("HPoiUtils - - - 未知的初始化错误...");
+            throw new RuntimeException("HPoiUtils - - - 未知的初始化错误...");
         }
-        return false;
+    }
+
+
+    private static Boolean validateFieldAndFile(List<String> listField, File file, Class c) throws IOException {
+        //1、listField集合校验
+        if (listField == null || listField.size() == 0) {
+            throw new RuntimeException("listField集合为空, 表头元素对应属性名字的集合是必须的");
+        }
+        for (String ex : listField) {
+            if (StringUtils.isEmpty(ex)) {
+                throw new RuntimeException("listField中不允许出现空字符串");
+            }
+        }
+
+        //2、文件校验
+        String path = file.getPath();
+
+        try (InputStream inTemp = new FileInputStream(path)) {
+            if (inTemp == null) {//有必要吗
+                throw new RuntimeException("无法得到文件流");
+            }
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException("文件路径错误或在这个路径下找不到此文件");
+        }
+
+        if (c == null) {
+            throw new RuntimeException("c为空，Class是必须的");
+        }
+        return true;
     }
 
     private static Boolean check(File file, String sheetName, List<String> listField, Class c){
         try {
-            //sheetName检查
-            if (sheetName == null || "".equals(sheetName)) {
-                System.out.println("sheet名字不能为空");
-                return false;
-            }
-            //1、listField集合校验
-            if (listField == null || listField.size() == 0) {
-                System.out.println("listField集合为空, 表头元素对应属性名字的集合是必须的");
-                return false;
-            }
-            for (String ex : listField) {
-                if(StringUtils.isEmpty(ex)){
-                    System.out.println("listField中不允许出现空字符串");
-                    return false;
-                }
-            }
+            //sheetName检查 为空默认取索引0
+//            if (sheetName == null || "".equals(sheetName)) {
+//                throw new RuntimeException("sheet名字不能为空");
+//            }
 
-            //2、文件校验
-            String path = file.getPath();
-
-            try (  InputStream inTemp = new FileInputStream(path) ){
-                if (inTemp == null) {//有必要吗
-                    System.out.println("无法得到文件流");
-                    return false;
-                }
-            } catch (FileNotFoundException e) {
-                System.out.println("文件路径错误或在这个路径下找不到此文件");
-                return false;
-            }
-
-            if (c == null) {
-                System.out.println("c为空，Class是必须的");
-                return false;
-            }
-            return true;
+            return validateFieldAndFile(listField, file, c);
         }catch (Exception e){
-            System.out.println("HPoiUtils - - - 未知的初始化错误...");
+            throw new RuntimeException("HPoiUtils - - - 未知的初始化错误...");
         }
-        return false;
     }
+
 
 
     /**
@@ -413,43 +321,6 @@ public class HPoiUtils {
         return sb.append(Tran(filedName)).toString();
     }
 
-    /**
-     * 从文件中得到String类型的数据
-     * @param file 文件
-     * @param len excel文件表头长度
-     * @return string数据集合
-     */
-    private static List getStr(File file, Integer sheetIndex, Integer len){
-        //分情况处理Excel
-        String path = file.getPath();
-        InputStream in = null;
-        try {
-            in = new FileInputStream(path);
-        } catch (FileNotFoundException e) {
-            System.out.println("文件路径错误或在这个路径下找不到此文件");
-            return null;
-        }
-        List listResultStr = null;
-        try {
-            String s = StringUtils.substringAfterLast(path, ".");//文件名，分割
-            if("xls".equals(s)){
-                listResultStr = doXls(in,sheetIndex,len);
-            }else if("xlsx".equals(s)){
-                listResultStr = doXlsx(in,sheetIndex,len);
-            }else{
-                System.out.println("文件格式不支持，请选择xls或xlsx格式的Excel文件");
-            }
-        } catch (IOException e) {
-            System.out.println("通过文件流获取Excel对象失败");
-        } finally {
-            try {
-                in.close();//关闭文件/流
-            } catch (IOException e) {
-                System.out.println("关闭文件流失败");
-            }
-        }
-        return listResultStr;
-    }
 
     private static List getStr(File file, String sheetName, Integer len){
         //分情况处理Excel
@@ -458,99 +329,57 @@ public class HPoiUtils {
         try {
             in = new FileInputStream(path);
         } catch (FileNotFoundException e) {
-            System.out.println("文件路径错误或在这个路径下找不到此文件");
-            return null;
+            throw new RuntimeException("文件路径错误或在这个路径下找不到此文件");
         }
         List listResultStr = null;
         try {
-            String s = StringUtils.substringAfterLast(path, ".");//文件名，分割
-            if("xls".equals(s)){
-                listResultStr = doXls(in,sheetName,len);
-            }else if("xlsx".equals(s)){
-                listResultStr = doXlsx(in,sheetName,len);
-            }else{
-                System.out.println("文件格式不支持，请选择xls或xlsx格式的Excel文件");
-            }
+            //文件名，分割
+            String s = StringUtils.substringAfterLast(path, ".");
+            //Excel三种格式，WPS两种格式
+            listResultStr = readExcel(in,sheetName,len);
+//            if("xls".equals(s)){
+//            }else if("xlsx".equals(s)){
+//                listResultStr = readExcel(in,sheetName,len);
+//            }else if("xlsm".equals(s)) {
+//                listResultStr = readExcel(in, sheetName, len);
+//            }else if("et".equals(s)) {
+//                listResultStr = readExcel(in, sheetName, len);
+//            }else if("ett".equals(s)) {
+//                listResultStr = readExcel(in, sheetName, len);
+//
+//            }else{
+//                throw new RuntimeException("文件格式不支持，请选择xls或xlsx格式的Excel文件");
+//            }
         } catch (IOException e) {
-            System.out.println("通过文件流获取Excel对象失败");
+            throw new RuntimeException("通过文件流获取Excel对象失败");
         } finally {
             try {
                 in.close();//关闭文件/流
             } catch (IOException e) {
-                System.out.println("关闭文件流失败");
+                throw new RuntimeException("关闭文件流失败");
             }
         }
         return listResultStr;
     }
 
-    /**
-     * 读取xls文件
-     * @param in 文件输入流
-     * @param len 最大列数
-     * @throws IOException
-     */
-    private static List doXls(InputStream in, Integer sheetIndex, Integer len) throws IOException {
-        List<String> listResultStr = new ArrayList();
-        //获取Excel文件对象
-        HSSFWorkbook workbook = new HSSFWorkbook(in);
-        //获取sheet表对象
-        HSSFSheet sheet = workbook.getSheetAt(sheetIndex);//只允许有一个sheet表
-        int nRow = sheet.getLastRowNum();//若excel表中有3行，那么nRow=2 : 0,1,2
-        for(int i=0; i <= nRow; i++){
-            HSSFRow row = sheet.getRow(i);//row:第i+1行
-            if(row != null)
-                for(int j = 0; j < len; j++){
-                    HSSFCell cell = row.getCell(j);//cell:第i+1行第j+1列单元格
-                    if(cell == null){
-                        listResultStr.add("");
-                    }else{
-                        String str = cell.toString();
-                        listResultStr.add(str);
-                    }
-                }
-        }
-        return listResultStr;
-    }
 
-    private static List doXls(InputStream in, String sheetName, Integer len) throws IOException {
-        List<String> listResultStr = new ArrayList();
-        //获取Excel文件对象
-        HSSFWorkbook workbook = new HSSFWorkbook(in);
-        //获取sheet表对象
-        final HSSFSheet sheet = workbook.getSheet(sheetName);
-        int nRow = sheet.getLastRowNum();//若excel表中有3行，那么nRow=2 : 0,1,2
-        for(int i=0; i <= nRow; i++){
-            HSSFRow row = sheet.getRow(i);//row:第i+1行
-            if(row != null)
-                for(int j = 0; j < len; j++){
-                    HSSFCell cell = row.getCell(j);//cell:第i+1行第j+1列单元格
-                    if(cell == null){
-                        listResultStr.add("");
-                    }else{
-                        String str = cell.toString();
-                        listResultStr.add(str);
-                    }
-                }
-        }
-        return listResultStr;
-    }
 
-    /**
-     * 读取xlsx文件
-     * @param in
-     * @param len
-     * @throws IOException
-     */
-    private static List doXlsx(InputStream in, Integer sheetIndex, Integer len) throws IOException {
-        List<String> listResultStr = new ArrayList();
-        XSSFWorkbook workbook = new XSSFWorkbook(in);
-        XSSFSheet sheet = workbook.getSheetAt(sheetIndex);
+
+    private static List readExcel(InputStream in, String sheetName, Integer len) throws IOException {
+        List<String> listResultStr = new ArrayList<>();
+        Workbook workbook = WorkbookFactory.create(in);
+        Sheet sheet;
+        if(sheetName == null || sheetName.isEmpty()){
+            sheet = workbook.getSheetAt(0);
+        }else {
+            sheet = workbook.getSheet(sheetName);
+        }
         int nRow = sheet.getLastRowNum();
         for(int i = 0; i <= nRow; i++){
-            XSSFRow row = sheet.getRow(i);
-            if(row != null) //不会读取空行
+            Row row = sheet.getRow(i);
+            if(row != null){
                 for(int j = 0; j < len; j++){
-                    XSSFCell cell = row.getCell(j);
+                    Cell cell = row.getCell(j);
                     if(cell == null){
                         listResultStr.add("");
                     }else {
@@ -558,27 +387,7 @@ public class HPoiUtils {
                         listResultStr.add(str);
                     }
                 }
-        }
-        return listResultStr;
-    }
-
-    private static List doXlsx(InputStream in, String sheetName, Integer len) throws IOException {
-        List<String> listResultStr = new ArrayList();
-        XSSFWorkbook workbook = new XSSFWorkbook(in);
-        final XSSFSheet sheet = workbook.getSheet(sheetName);
-        int nRow = sheet.getLastRowNum();
-        for(int i = 0; i <= nRow; i++){
-            XSSFRow row = sheet.getRow(i);
-            if(row != null)
-                for(int j = 0; j < len; j++){
-                    XSSFCell cell = row.getCell(j);
-                    if(cell == null){
-                        listResultStr.add("");
-                    }else {
-                        String str = cell.toString();
-                        listResultStr.add(str);
-                    }
-                }
+            }
         }
         return listResultStr;
     }
@@ -593,7 +402,9 @@ public class HPoiUtils {
     private static Object regression(String typeName,String dataStr){
         if (typeName.contains("Integer")) {
             int n = dataStr.indexOf(".");
-            if(n > 0) dataStr = dataStr.substring(0, n);
+            if(n > 0){
+                dataStr = dataStr.substring(0, n);
+            }
         }
         try {
             Class<?> c = Class.forName(typeName);
@@ -614,8 +425,9 @@ public class HPoiUtils {
      */
     private static String Tran(String s){
         char[] chars = s.toCharArray();
-        if (chars[0] >= 97 && chars[0] <= 122)
+        if (chars[0] >= 97 && chars[0] <= 122){
             chars[0] -= 32;
+        }
         return String.valueOf(chars);
     }
 
@@ -628,7 +440,7 @@ public class HPoiUtils {
      * @param hasHeader 是否有头
      * @return 读取到的对象集合
      */
-    public static List exeCsv(File file, List listField, Class c, boolean hasHeader) {
+    public static List extractCsvData(File file, List listField, Class c, boolean hasHeader) {
         //参数检查
         Boolean check = check(file, 0, listField, c);
         if(!check){
@@ -639,13 +451,13 @@ public class HPoiUtils {
         return listResultObj;
     }
 
-    public static List exeCsv(File file, List listField, Class c) {
-        return exeCsv(file, listField, c, true);
+    public static List extractCsvData(File file, List listField, Class c) {
+        return extractCsvData(file, listField, c, true);
     }
 
-    public static List exeCsv(File file, List listField) {
+    public static List extractCsvData(File file, List listField) {
         final Class c = generateClass(listField);
-        return exeCsv(file, listField, c, true);
+        return extractCsvData(file, listField, c, true);
     }
 
     private static List generateResultCSV(File file, List<String> listField, Class c, boolean hasHeader) {
