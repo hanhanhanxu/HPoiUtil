@@ -95,7 +95,7 @@ public class HPoiUtils {
         // 得到一个池
         ClassPool pool = ClassPool.getDefault();
         // 根据名称在运行期间动态生成一个类
-        String className = MPoiUtil.class.getPackage().getName() + "." + CLASSNAME + ".java";
+        String className = HPoiUtil.class.getPackage().getName() + "." + CLASSNAME + ".java";
         // 根据类名 动态生成一个CtClass
         CtClass ctClass = pool.makeClass(className);
 
