@@ -15,6 +15,7 @@ import java.io.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -504,7 +505,7 @@ public class HPoiUtils {
                     if(cell == null){
                         listResultStr.add("");
                     }else{
-                        String str = cell.toString();
+                        String str = getCellValue(cell);
                         listResultStr.add(str);
                     }
                 }
@@ -527,12 +528,47 @@ public class HPoiUtils {
                     if(cell == null){
                         listResultStr.add("");
                     }else{
-                        String str = cell.toString();
+                        String str = getXlsCellValue(cell);
                         listResultStr.add(str);
                     }
                 }
         }
         return listResultStr;
+    }
+
+    private static String getCellValue(XSSFCell fromCell) {
+        String cellNameType = fromCell.getCellTypeEnum().name();
+        if (cellNameType.equals(CellType.STRING.name())) {
+            return fromCell.getRichStringCellValue().getString();
+        }
+        if (cellNameType.equals(CellType.NUMERIC.name())) {
+            if (DateUtil.isCellDateFormatted(fromCell)) {
+                return fromCell.getDateCellValue().toString();
+            } else {
+                return BigDecimal.valueOf(fromCell.getNumericCellValue()).toPlainString();
+            }
+        } else if (cellNameType.equals(CellType.STRING.name())) {
+            return fromCell.getStringCellValue();
+        }
+        return fromCell.toString();
+    }
+
+    private static String getXlsCellValue(HSSFCell fromCell) {
+        String cellNameType = fromCell.getCellTypeEnum().name();
+        if (cellNameType.equals(CellType.STRING.name())) {
+            return fromCell.getRichStringCellValue().getString();
+        }
+        if (cellNameType.equals(CellType.NUMERIC.name())) {
+            if (DateUtil.isCellDateFormatted(fromCell)) {
+                return fromCell.getDateCellValue().toString();
+            } else {
+                return BigDecimal.valueOf(fromCell.getNumericCellValue()).toPlainString();
+            }
+        } else if (cellNameType.equals(CellType.STRING)) {
+            return fromCell.getStringCellValue();
+        }
+
+        return fromCell.toString();
     }
 
     /**
